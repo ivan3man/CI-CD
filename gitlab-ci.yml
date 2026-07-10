@@ -1,0 +1,115 @@
+stages:
+  - build
+  - codestyle
+  - test
+  - deploy
+
+build_cat:
+  stage: build
+  script:
+    - make -C src/cat
+    - mkdir build
+    - cp src/cat/s21_cat build/
+  artifacts:
+    paths:
+      - build/
+    expire_in: 30 days
+  after_script:
+    - >
+      if [ $CI_JOB_STATUS == 'success' ] ; then
+        curl -s -X POST https://api.telegram.org/bot7197983194:AAFUgFmNsmKy3tj1QKQ2CxsPCLJB5by4IdU/sendMessage \
+        -d chat_id=219664642 \
+        -d text="Build stage completed successfully for cat."
+      else
+        curl -s -X POST https://api.telegram.org/bot7197983194:AAFUgFmNsmKy3tj1QKQ2CxsPCLJB5by4IdU/sendMessage \
+        -d chat_id=219664642 \
+        -d text="Build stage failed for cat. Please check the pipeline logs for more details."
+      fi
+
+build_grep:
+  stage: build
+  script:
+    - make -C src/grep
+    - mkdir build
+    - cp src/grep/s21_grep build/
+  artifacts:
+    paths:
+      - build/
+    expire_in: 30 days
+  after_script:
+    - >
+      if [ $CI_JOB_STATUS == 'success' ] ; then
+        curl -s -X POST https://api.telegram.org/bot7197983194:AAFUgFmNsmKy3tj1QKQ2CxsPCLJB5by4IdU/sendMessage \
+        -d chat_id=219664642 \
+        -d text="Build stage completed successfully for grep."
+      else
+        curl -s -X POST https://api.telegram.org/bot7197983194:AAFUgFmNsmKy3tj1QKQ2CxsPCLJB5by4IdU/sendMessage \
+        -d chat_id=219664642 \
+        -d text="Build stage failed for grep. Please check the pipeline logs for more details."
+      fi
+
+codestyle_test:
+  stage: codestyle
+  script:
+    - cp materials/linters/.clang-format .
+    - clang-format -n src/cat/*.c src/grep/*.c src/cat/*.h src/grep/*.h
+  after_script:
+    - >
+      if [ $CI_JOB_STATUS == 'success' ] ; then
+        curl -s -X POST https://api.telegram.org/bot7197983194:AAFUgFmNsmKy3tj1QKQ2CxsPCLJB5by4IdU/sendMessage \
+        -d chat_id=219664642 \
+        -d text="Codestyle test stage completed successfully."
+      else
+        curl -s -X POST https://api.telegram.org/bot7197983194:AAFUgFmNsmKy3tj1QKQ2CxsPCLJB5by4IdU/sendMessage \
+        -d chat_id=219664642 \
+        -d text="Codestyle test stage failed. Please check the pipeline logs for more details."
+      fi
+
+test_cat:
+  stage: test
+  script:
+    - make test -C src/cat
+  after_script:
+    - >
+      if [ $CI_JOB_STATUS == 'success' ] ; then
+        curl -s -X POST https://api.telegram.org/bot7197983194:AAFUgFmNsmKy3tj1QKQ2CxsPCLJB5by4IdU/sendMessage \
+        -d chat_id=219664642 \
+        -d text="Test stage completed successfully for cat."
+      else
+        curl -s -X POST https://api.telegram.org/bot7197983194:AAFUgFmNsmKy3tj1QKQ2CxsPCLJB5by4IdU/sendMessage \
+        -d chat_id=219664642 \
+        -d text="Test stage failed for cat. Please check the pipeline logs for more details."
+      fi
+
+test_grep:
+  stage: test
+  script:
+    - make test -C src/grep
+  after_script:
+    - >
+      if [ $CI_JOB_STATUS == 'success' ] ; then
+        curl -s -X POST https://api.telegram.org/bot7197983194:AAFUgFmNsmKy3tj1QKQ2CxsPCLJB5by4IdU/sendMessage \
+        -d chat_id=219664642 \
+        -d text="Test stage completed successfully for grep."
+      else
+        curl -s -X POST https://api.telegram.org/bot7197983194:AAFUgFmNsmKy3tj1QKQ2CxsPCLJB5by4IdU/sendMessage \
+        -d chat_id=219664642 \
+        -d text="Test stage failed for grep. Please check the pipeline logs for more details."
+      fi
+
+deploy_job:
+  stage: deploy
+  script:
+    - bash deploy_script.sh
+  when: manual
+  after_script:
+    - >
+      if [ $CI_JOB_STATUS == 'success' ] ; then
+        curl -s -X POST https://api.telegram.org/bot7197983194:AAFUgFmNsmKy3tj1QKQ2CxsPCLJB5by4IdU/sendMessage \
+        -d chat_id=219664642 \
+        -d text="Deploy stage completed successfully."
+      else
+        curl -s -X POST https://api.telegram.org/bot7197983194:AAFUgFmNsmKy3tj1QKQ2CxsPCLJB5by4IdU/sendMessage \
+        -d chat_id=219664642 \
+        -d text="Deploy stage failed. Please check the pipeline logs for more details."
+      fi
