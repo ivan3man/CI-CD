@@ -1,0 +1,18 @@
+This is a test file
+for the s21_cat program.
+
+It contains text patterns
+to test the different flags.
+
+This line has trailing whitespace.   
+
+    This line has leading whitespace.
+
+These are consecutive blank lines.
+
+
+This line has non-printable characters:  	
+
+ !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþ
+
+This is the end of the test file.
